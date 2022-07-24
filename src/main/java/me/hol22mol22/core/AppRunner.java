@@ -1,9 +1,11 @@
-package me.hol22mol22.core.scope;
+package me.hol22mol22.core;
 
+import me.hol22mol22.core.MyEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -14,11 +16,12 @@ public class AppRunner implements ApplicationRunner {
 
     @Autowired
     ApplicationContext ctx;
+    @Autowired
+    ApplicationEventPublisher publisher;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Environment environment = ctx.getEnvironment();
-        System.out.println(Arrays.toString(environment.getActiveProfiles()));
-        System.out.println(Arrays.toString(environment.getDefaultProfiles()));
+        publisher.publishEvent(new MyEvent(this, 100));
     }
+
 }
