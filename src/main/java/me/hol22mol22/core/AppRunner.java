@@ -29,11 +29,19 @@ public class AppRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         publisher.publishEvent(new MyEvent(this, 100));
+
+        // 접두어 사용시 ClassPathResource
         Resource resource = resourceLoader.getResource("classpath:test.txt");
         System.out.println(resource.exists());
         System.out.println(resource.getDescription());
         System.out.println(Files.readString(Path.of(resource.getURI())));
+        System.out.println(resourceLoader.getClass());
+        System.out.println(resource.getClass());
 
+        // 접두어 미사용시 ServletContextResource
+        resource = resourceLoader.getResource("test.txt");
+        System.out.println(resource.exists());
+        System.out.println(resource.getClass());
     }
 
 }
