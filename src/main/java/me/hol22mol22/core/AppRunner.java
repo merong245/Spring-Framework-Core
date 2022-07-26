@@ -1,15 +1,16 @@
 package me.hol22mol22.core;
 
-import me.hol22mol22.core.MyEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,10 +27,15 @@ public class AppRunner implements ApplicationRunner {
     @Autowired
     ResourceLoader resourceLoader;
 
+    @Autowired
+    Validator validator;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        publisher.publishEvent(new MyEvent(this, 100));
+        // Event Publisher
+        publisher.publishEvent(new MyEvent(this, 100, ""));
 
+        // Resource
         // 접두어 사용시 ClassPathResource
         Resource resource = resourceLoader.getResource("classpath:test.txt");
         System.out.println(resource.exists());
@@ -42,6 +48,35 @@ public class AppRunner implements ApplicationRunner {
         resource = resourceLoader.getResource("test.txt");
         System.out.println(resource.exists());
         System.out.println(resource.getClass());
+
+
+        // Validator
+        MyEvent event = new MyEvent(this,-1, "");
+        // 설정 Validator
+        MyEventValidator eventValidator = new MyEventValidator();
+        Errors errors = new BeanPropertyBindingResult(event, "event");
+
+        eventValidator.validate(event,errors);
+
+        System.out.println(errors.hasErrors());
+
+        errors.getFieldErrors().forEach(e ->{
+            System.out.println("=====error code ======");
+            Arrays.stream(e.getCodes()).forEach(System.out::println);
+            System.out.println(e.getDefaultMessage());
+        });
+        // 스프링 부트 제공 Validator
+
+        validator.validate(event,errors);
+        System.out.println(errors.hasErrors());
+
+        errors.getFieldErrors().forEach(e ->{
+            System.out.println("=====error code ======");
+            Arrays.stream(e.getCodes()).forEach(System.out::println);
+            System.out.println(e.getDefaultMessage());
+        });
+        System.out.println(validator.getClass());
+
     }
 
 }
