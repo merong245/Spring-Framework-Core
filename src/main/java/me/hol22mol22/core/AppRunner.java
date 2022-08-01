@@ -1,5 +1,6 @@
 package me.hol22mol22.core;
 
+import me.hol22mol22.core.event.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -49,6 +50,11 @@ public class AppRunner implements ApplicationRunner {
 
     @Value("#{sample.data}")
     int sampleData;
+
+
+    // 스프링 AOP
+    @Autowired
+    EventService eventService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -105,6 +111,12 @@ public class AppRunner implements ApplicationRunner {
         System.out.println(myValue);
         System.out.println(isMyValue100);
         System.out.println(sampleData);
+
+        // 스프링 AOP
+        eventService.createEvent();
+        eventService.publishEvent();
+        eventService.deleteEvent();
     }
+
 
 }
