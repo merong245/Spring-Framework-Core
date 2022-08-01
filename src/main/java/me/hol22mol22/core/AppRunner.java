@@ -1,6 +1,7 @@
 package me.hol22mol22.core;
 
 import me.hol22mol22.core.event.EventService;
+import me.hol22mol22.core.library.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -55,6 +56,11 @@ public class AppRunner implements ApplicationRunner {
     // 스프링 AOP
     @Autowired
     EventService eventService;
+
+    // null safety
+    @Autowired
+    LibraryService libraryService;
+
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -116,6 +122,9 @@ public class AppRunner implements ApplicationRunner {
         eventService.createEvent();
         eventService.publishEvent();
         eventService.deleteEvent();
+
+        // null safety
+        String libraryName = libraryService.createLibrary("Ari");
     }
 
 
